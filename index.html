@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>GeoDashboard | Fahril Project</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(145deg, #0c0f1e 0%, #0a0e1a 100%);
+            color: #eef2ff;
+            line-height: 1.5;
+            padding: 2rem 1.5rem;
+        }
+
+        .dev-watermark {
+            position: fixed;
+            bottom: 18px;
+            right: 18px;
+            background: rgba(0, 255, 157, 0.1);
+            backdrop-filter: blur(6px);
+            padding: 5px 14px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-family: 'Courier New', monospace;
+            color: #00ff9d;
+            border: 0.5px solid #00ff9d33;
+            z-index: 99;
+            pointer-events: none;
+            letter-spacing: 1px;
+        }
+
+        .dev-badge {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 20, 30, 0.85);
+            backdrop-filter: blur(8px);
+            padding: 6px 24px;
+            border-radius: 80px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #00ff9d;
+            border: 1px solid #00ff9d66;
+            z-index: 100;
+            white-space: nowrap;
+            letter-spacing: 0.6px;
+            box-shadow: 0 0 10px rgba(0,255,157,0.2);
+        }
+
+        .dev-credit {
+            position: fixed;
+            top: 20px;
+            right: -30px;
+            background: #00ff9d;
+            color: #0a0e27;
+            padding: 8px 45px;
+            font-size: 0.7em;
+            font-weight: bold;
+            transform: rotate(45deg);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            z-index: 101;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+        }
+
+        .dev-credit a {
+            color: #0a0e27;
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .header-card {
+            background: rgba(18, 25, 45, 0.65);
+            backdrop-filter: blur(4px);
+            border-radius: 2rem;
+            padding: 1.8rem 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(0, 255, 157, 0.35);
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.4);
+            text-align: center;
+        }
+
+        .header-card h1 {
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, #ffffff, #00ff9d);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-badge {
+            display: inline-block;
+            background: #00ff9d22;
+            border-left: 3px solid #00ff9d;
+            padding: 0.2rem 1rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            border-radius: 0 20px 20px 0;
+            margin-top: 0.3rem;
+            color: #bbf0e5;
+        }
+
+        .dashboard-split {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card-modern {
+            background: rgba(12, 20, 35, 0.65);
+            backdrop-filter: blur(4px);
+            border-radius: 1.8rem;
+            padding: 1.8rem;
+            border: 1px solid rgba(0, 255, 157, 0.25);
+            transition: all 0.25s ease;
+            height: 100%;
+        }
+
+        .card-modern:hover {
+            border-color: #00ff9d88;
+            box-shadow: 0 10px 25px -10px rgba(0,255,157,0.25);
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.7rem;
+            margin-bottom: 1rem;
+            color: #c7ffe6;
+            border-left: 4px solid #00ff9d;
+            padding-left: 1rem;
+        }
+
+        .btn-location {
+            background: linear-gradient(95deg, #0077ff, #00c3ff);
+            border: none;
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 60px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.25s;
+            box-shadow: 0 8px 18px rgba(0, 119, 255, 0.25);
+            width: 100%;
+            max-width: 260px;
+            display: block;
+            margin: 1rem auto;
+        }
+
+        .btn-location:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(95deg, #0066dd, #00aaff);
+            box-shadow: 0 12px 24px rgba(0, 119, 255, 0.4);
+        }
+
+        .info-box {
+            background: #f0f7fe;
+            border-radius: 32px;
+            padding: 18px 14px;
+            margin-top: 20px;
+            border-left: 4px solid #00ff9d;
+            font-family: monospace;
+            font-size: 0.9rem;
+            word-break: break-word;
+            color: #0a2b3e;
+        }
+
+        .info-box span {
+            font-weight: bold;
+            color: #0066cc;
+        }
+
+        .ip-display {
+            background: #00000066;
+            border-radius: 1.2rem;
+            padding: 1rem;
+            font-family: monospace;
+            font-size: 0.9rem;
+            margin: 0.8rem 0;
+            border: 1px solid #2a3a60;
+        }
+
+        .ip-label {
+            color: #00ff9d;
+            font-weight: bold;
+        }
+
+        .btn-ip {
+            background: #00ff9d22;
+            border: 1px solid #00ff9d;
+            padding: 8px 20px;
+            border-radius: 60px;
+            color: #00ff9d;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: bold;
+            width: 100%;
+            max-width: 240px;
+            display: block;
+            margin: 0.8rem auto 0;
+        }
+
+        .btn-ip:hover {
+            background: #00ff9d;
+            color: #0a0e1a;
+            box-shadow: 0 0 12px #00ff9d;
+        }
+
+        .main-footer {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #7c8aa0;
+            border-top: 1px solid #1f2a44;
+            padding-top: 1.5rem;
+        }
+
+        @media (max-width: 780px) {
+            body { padding: 1rem; }
+            .header-card h1 { font-size: 1.5rem; }
+            .dev-badge { font-size: 0.6rem; padding: 4px 12px; top: 12px; }
+            .dev-credit { font-size: 0.55rem; padding: 5px 30px; top: 12px; right: -32px; }
+            .dashboard-split { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="dev-credit">
+    <a href="https://github.com/fahrilmoonstar-svg" target="_blank">⚡ Fahril Project</a>
+</div>
+<div class="dev-badge">
+    🧩 Fahril Project | Cyber & Geolocation Dev 🧩
+</div>
+<div class="dev-watermark">
+    ⚡ Fahril Moonstar • GeoDashboard
+</div>
+
+<div class="container">
+    <div class="header-card">
+        <h1>📍 GeoDashboard — Sistem Intelijen Lokasi & IP</h1>
+        <div class="header-badge">
+            🔐 Karya Unggulan Fahril Moonstar | Keamanan Siber & Teknologi Pemetaan
+        </div>
+        <p style="margin-top: 1rem; color: #b8c7ff;">Menggabungkan dua metode pendeteksian lokasi dalam satu antarmuka: koordinat langsung dari perangkat melalui GPS dan data lokasi berdasarkan alamat IP publik.</p>
+    </div>
+
+    <div class="dashboard-split">
+        <!-- GeoVision -->
+        <div class="card-modern">
+            <div class="card-title">
+                📡 GeoVision | Lokasi Berdasarkan Perangkat
+            </div>
+            <p style="margin-bottom: 0.8rem;">Akses data lokasi secara langsung dan akurat dari perangkat yang digunakan (memerlukan izin akses). Tingkat ketelitian bisa mencapai skala meter.</p>
+            <button class="btn-location" id="btnGeoVision">
+                🛰️ Ambil Data Lokasi Perangkat
+            </button>
+            <div class="info-box" id="geoInfoBox">
+                <span>📡 Status:</span> Menunggu perintah atau izin akses lokasi.
+            </div>
+            <div class="small-note" style="font-size:0.7rem; text-align:center; margin-top:12px;">
+                🗺️ Menggunakan API Geolokasi — seluruh data diproses hanya di perangkat Anda.
+            </div>
+        </div>
+
+        <!-- IP Intelligence -->
+        <div class="card-modern">
+            <div class="card-title">
+                🌐 Intelijen Alamat IP
+            </div>
+            <p style="margin-bottom: 0.5rem;">Menampilkan alamat IP publik dan perkiraan lokasi jaringan yang digunakan, tanpa perlu meminta izin akses lokasi dari perangkat.</p>
+            <div class="ip-display" id="ipResultArea">
+                <span class="ip-label">🌐 Alamat IP Publik:</span> <span id="ipAddressField">— Tekan tombol untuk memuat —</span><br>
+                <span class="ip-label">📍 Perkiraan Lokasi:</span> <span id="ipLocationField">Belum tersedia</span>
+            </div>
+            <button class="btn-ip" id="btnFetchIp">🚀 Ambil Data IP & Lokasi</button>
+            <div class="small-note" style="font-size:0.7rem; text-align:center; margin-top:12px;">
+                ✨ Sumber data: ip-api.com — data bersifat anonim dan tidak disimpan. ✨
+            </div>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 1rem; margin-top: 1rem;">
+        <div style="background: rgba(0,0,0,0.3); border-radius: 1.5rem; padding: 1rem;">
+            <h3 style="color:#00ff9d;">🎯 Manfaat Data IP</h3>
+            <p style="font-size: 0.85rem;">Digunakan untuk penyesuaian konten, pendeteksian aktivitas yang mencurigakan dalam jaringan, dan analisis pola lalu lintas data.</p>
+        </div>
+        <div style="background: rgba(0,0,0,0.3); border-radius: 1.5rem; padding: 1rem;">
+            <h3 style="color:#00ff9d;">⚡ Ketelitian Lokasi GPS</h3>
+            <p style="font-size: 0.85rem;">Fitur GeoVision dikembangkan untuk mengutamakan akurasi, sehingga mampu memberikan data koordinat dengan tingkat ketelitian yang tinggi.</p>
+        </div>
+        <div style="background: rgba(0,0,0,0.3); border-radius: 1.5rem; padding: 1rem;">
+            <h3 style="color:#00ff9d;">🔐 Komitmen Pengembang</h3>
+            <p style="font-size: 0.85rem;">Saya menjaga kerahasiaan data pengguna, mengembangkan sistem dengan prinsip keterbukaan, dan membagikan pengetahuan teknologi ini untuk tujuan edukasi dan pengembangan yang aman.</p>
+        </div>
+    </div>
+
+    <div class="main-footer">
+        © 2026 Fahril Moonstar | GeoVision + IP Intelligence — Kode etis, edukasi, tanpa penyimpanan data pribadi.
+    </div>
+</div>
+
+<script>
+    // --- 1. GeoVision (GPS / Lokasi Perangkat) ---
+    const geoBtn = document.getElementById('btnGeoVision');
+    const geoBox = document.getElementById('geoInfoBox');
+
+    function dapatkanLokasiDevice() {
+        if (!navigator.geolocation) {
+            geoBox.innerHTML = `<span>❌ Error:</span> Peramban Anda tidak mendukung Geolocation API.`;
+            return;
+        }
+        geoBox.innerHTML = `<span>🛰️ Status:</span> Mengakses sinyal GPS & jaringan... ⏳ <br> <small>Mohon berikan izin akses lokasi jika diminta peramban.</small>`;
+        
+        navigator.geolocation.getCurrentPosition(
+            (posisi) => {
+                const lat = posisi.coords.latitude.toFixed(6);
+                const lon = posisi.coords.longitude.toFixed(6);
+                const akurasi = posisi.coords.accuracy.toFixed(0);
+                geoBox.innerHTML = `
+                    <span>✅ Lokasi Berhasil Diambil:</span><br>
+                    🌐 Latitude (Lintang) : <strong>${lat}</strong><br>
+                    🌐 Longitude (Bujur): <strong>${lon}</strong><br>
+                    🎯 Tingkat Ketelitian : ±${akurasi} meter<br>
+                    <span style="font-size:0.8rem; display:inline-block; margin-top:10px;">🛡️ Fahril GeoEngine — Data koordinat real-time</span>
+                `;
+            },
+            (error) => {
+                let pesanError = "";
+                switch (error.code) {
+                    case error.PERMISSION_DENIED:
+                        pesanError = "Izin akses lokasi ditolak oleh peramban. Silakan aktifkan izin lokasi untuk fitur ini.";
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        pesanError = "Informasi lokasi tidak tersedia. Periksa sinyal GPS atau koneksi jaringan.";
+                        break;
+                    case error.TIMEOUT:
+                        pesanError = "Waktu permintaan data lokasi habis. Coba lagi di area dengan sinyal lebih baik.";
+                        break;
+                    default:
+                        pesanError = "Terjadi kesalahan teknis yang tidak dikenal.";
+                        break;
+                }
+                geoBox.innerHTML = `<span>⚠️ Gagal Mengakses Lokasi:</span> ${pesanError}`;
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 15000,
+                maximumAge: 0
+            }
+        );
+    }
+
+    // Pastikan tombol menjalankan fungsi dengan benar
+    if (geoBtn) {
+        geoBtn.addEventListener('click', dapatkanLokasiDevice);
+        console.log("Tombol GeoVision berhasil dihubungkan.");
+    } else {
+        console.error("Tombol dengan id 'btnGeoVision' tidak ditemukan.");
+    }
+
+    // --- 2. IP Intelligence ---
+    const ipSpan = document.getElementById('ipAddressField');
+    const locSpan = document.getElementById('ipLocationField');
+    const ipBtn = document.getElementById('btnFetchIp');
+
+    async function fetchIPGeo() {
+        ipSpan.innerText = 'Mengambil data...';
+        locSpan.innerText = 'Menunggu respon server...';
+        try {
+            const response = await fetch('https://ip-api.com/json/?fields=status,country,city,lat,lon,query');
+            const data = await response.json();
+            if (data.status === 'success') {
+                ipSpan.innerText = data.query;
+                locSpan.innerHTML = `${data.city}, ${data.country} <span style="opacity:0.7;">📍 ( ${data.lat}, ${data.lon} )</span>`;
+            } else {
+                ipSpan.innerText = 'Gagal memuat data';
+                locSpan.innerText = 'Alamat IP pribadi / API terblokir';
+            }
+        } catch (err) {
+            ipSpan.innerText = 'Gangguan koneksi';
+            locSpan.innerText = 'Periksa kembali sambungan internet Anda';
+            console.warn(err);
+        }
+    }
+
+    if (ipBtn) {
+        ipBtn.addEventListener('click', fetchIPGeo);
+    }
+    
+    // Jalankan sekali saat halaman dimuat agar data IP langsung muncul
+    fetchIPGeo();
+</script>
+</body>
+</html>
